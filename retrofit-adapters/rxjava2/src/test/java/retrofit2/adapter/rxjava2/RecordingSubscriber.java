@@ -15,6 +15,8 @@
  */
 package retrofit2.adapter.rxjava2;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.reactivex.Notification;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -25,8 +27,6 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /** A test {@link Subscriber} and JUnit rule which guarantees all events are asserted. */
 final class RecordingSubscriber<T> implements Subscriber<T> {
@@ -39,22 +39,26 @@ final class RecordingSubscriber<T> implements Subscriber<T> {
     this.initialRequest = initialRequest;
   }
 
-  @Override public void onSubscribe(Subscription subscription) {
+  @Override
+  public void onSubscribe(Subscription subscription) {
     this.subscription = subscription;
 
     subscription.request(initialRequest);
   }
 
-  @Override public void onNext(T value) {
+  @Override
+  public void onNext(T value) {
     events.add(Notification.createOnNext(value));
   }
 
-  @Override public void onComplete() {
-    events.add(Notification.<T>createOnComplete());
+  @Override
+  public void onComplete() {
+    events.add(Notification.createOnComplete());
   }
 
-  @Override public void onError(Throwable e) {
-    events.add(Notification.<T>createOnError(e));
+  @Override
+  public void onError(Throwable e) {
+    events.add(Notification.createOnError(e));
   }
 
   private Notification<T> takeNotification() {
@@ -140,9 +144,11 @@ final class RecordingSubscriber<T> implements Subscriber<T> {
       return subscriber;
     }
 
-    @Override public Statement apply(final Statement base, Description description) {
+    @Override
+    public Statement apply(final Statement base, Description description) {
       return new Statement() {
-        @Override public void evaluate() throws Throwable {
+        @Override
+        public void evaluate() throws Throwable {
           base.evaluate();
           for (RecordingSubscriber<?> subscriber : subscribers) {
             subscriber.assertNoEvents();

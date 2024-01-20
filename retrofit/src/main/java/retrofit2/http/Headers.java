@@ -15,15 +15,16 @@
  */
 package retrofit2.http;
 
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 /**
  * Adds headers literally supplied in the {@code value}.
+ *
  * <pre><code>
  * &#64;Headers("Cache-Control: max-age=640000")
  * &#64;GET("/")
@@ -36,8 +37,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * &#64;GET("/")
  * ...
  * </code></pre>
- * <strong>Note:</strong> Headers do not overwrite each other. All headers with the same name will
- * be included in the request.
+ *
+ * <p>Parameter keys and values only allows ascii values by default. Specify {@link
+ * #allowUnsafeNonAsciiValues() allowUnsafeNonAsciiValues=true} to change this behavior.
+ *
+ * <p>&#64;Headers({ "X-Foo: Bar", "X-Ping: Pong" }, allowUnsafeNonAsciiValues=true) &#64;GET("/")
+ *
+ * <p><strong>Note:</strong> Headers do not overwrite each other. All headers with the same name
+ * will be included in the request.
  *
  * @see Header
  * @see HeaderMap
@@ -46,5 +53,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(METHOD)
 @Retention(RUNTIME)
 public @interface Headers {
+
+  /** The query parameter name. */
   String[] value();
+
+  /**
+   * Specifies whether the parameter {@linkplain #value() name} and value are already URL encoded.
+   */
+  boolean allowUnsafeNonAsciiValues() default false;
 }
